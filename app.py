@@ -214,24 +214,47 @@ st.markdown("""
 # ============================================================================
 
 class ConvAutoencoder(nn.Module):
-    """Convolutional Autoencoder for anomaly detection."""
+    """
+    Convolutional Autoencoder with BatchNorm and Dropout.
+    Matches the architecture used in training.
+    """
     def __init__(self):
         super(ConvAutoencoder, self).__init__()
         
+        # Encoder with BatchNorm and Dropout
         self.encoder = nn.Sequential(
+            # First conv block
             nn.Conv2d(3, 32, kernel_size=3, stride=2, padding=1),
             nn.ReLU(),
+            nn.BatchNorm2d(32),
+            nn.Dropout(0.2),
+            
+            # Second conv block
             nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1),
             nn.ReLU(),
+            nn.BatchNorm2d(64),
+            nn.Dropout(0.2),
+            
+            # Third conv block
             nn.Conv2d(64, 128, kernel_size=3, stride=2, padding=1),
             nn.ReLU(),
         )
         
+        # Decoder with BatchNorm and Dropout
         self.decoder = nn.Sequential(
+            # First deconv block
             nn.ConvTranspose2d(128, 64, kernel_size=3, stride=2, padding=1, output_padding=1),
             nn.ReLU(),
+            nn.BatchNorm2d(64),
+            nn.Dropout(0.2),
+            
+            # Second deconv block
             nn.ConvTranspose2d(64, 32, kernel_size=3, stride=2, padding=1, output_padding=1),
             nn.ReLU(),
+            nn.BatchNorm2d(32),
+            nn.Dropout(0.2),
+            
+            # Final deconv block
             nn.ConvTranspose2d(32, 3, kernel_size=3, stride=2, padding=1, output_padding=1),
             nn.Sigmoid(),
         )
