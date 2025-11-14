@@ -215,48 +215,39 @@ st.markdown("""
 
 class ConvAutoencoder(nn.Module):
     """
-    Convolutional Autoencoder with BatchNorm and Dropout.
-    Layer order: Conv2d → BatchNorm2d → ReLU → Dropout
+    Convolutional Autoencoder with BatchNorm (NO Dropout).
+    Layer order: Conv2d → ReLU → BatchNorm2d
     """
     def __init__(self):
         super(ConvAutoencoder, self).__init__()
         
-        # Encoder
+        # Encoder: Conv → ReLU → BatchNorm pattern
         self.encoder = nn.Sequential(
-            # First conv block
             nn.Conv2d(3, 32, kernel_size=3, stride=2, padding=1),      # 0
-            nn.BatchNorm2d(32),                                         # 1 (not 2!)
-            nn.ReLU(),                                                  # 2
-            nn.Dropout(0.2),                                            # 3
+            nn.ReLU(),                                                  # 1
+            nn.BatchNorm2d(32),                                         # 2
             
-            # Second conv block
-            nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1),     # 4
+            nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1),     # 3
+            nn.ReLU(),                                                  # 4
             nn.BatchNorm2d(64),                                         # 5
-            nn.ReLU(),                                                  # 6
-            nn.Dropout(0.2),                                            # 7
             
-            # Third conv block
-            nn.Conv2d(64, 128, kernel_size=3, stride=2, padding=1),    # 8
-            nn.ReLU(),                                                  # 9
+            nn.Conv2d(64, 128, kernel_size=3, stride=2, padding=1),    # 6
+            nn.ReLU(),                                                  # 7
+            nn.BatchNorm2d(128),                                        # 8
         )
         
-        # Decoder
+        # Decoder: ConvTranspose → ReLU → BatchNorm pattern
         self.decoder = nn.Sequential(
-            # First deconv block
             nn.ConvTranspose2d(128, 64, kernel_size=3, stride=2, padding=1, output_padding=1),  # 0
-            nn.BatchNorm2d(64),                                                                  # 1
-            nn.ReLU(),                                                                           # 2
-            nn.Dropout(0.2),                                                                     # 3
+            nn.ReLU(),                                                                           # 1
+            nn.BatchNorm2d(64),                                                                  # 2
             
-            # Second deconv block
-            nn.ConvTranspose2d(64, 32, kernel_size=3, stride=2, padding=1, output_padding=1),   # 4
+            nn.ConvTranspose2d(64, 32, kernel_size=3, stride=2, padding=1, output_padding=1),   # 3
+            nn.ReLU(),                                                                           # 4
             nn.BatchNorm2d(32),                                                                  # 5
-            nn.ReLU(),                                                                           # 6
-            nn.Dropout(0.2),                                                                     # 7
             
-            # Final deconv block
-            nn.ConvTranspose2d(32, 3, kernel_size=3, stride=2, padding=1, output_padding=1),    # 8
-            nn.Sigmoid(),                                                                        # 9
+            nn.ConvTranspose2d(32, 3, kernel_size=3, stride=2, padding=1, output_padding=1),    # 6
+            nn.Sigmoid(),                                                                        # 7
         )
     
     def forward(self, x):
