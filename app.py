@@ -257,7 +257,7 @@ def download_model_from_gdrive(gdrive_id: str, filename: str) -> str:
             return str(output_path)
         
         url = f"https://drive.google.com/uc?id={gdrive_id}"
-        gdown.download(url, str(output_path), quiet=False)
+        gdown.download(url, str(output_path), quiet=False, fuzzy=True)
         return str(output_path)
     except Exception as e:
         st.error(f"Error downloading model: {str(e)}")
