@@ -69,29 +69,38 @@ MODELS_CONFIG = {
 
 st.markdown("""
 <style>
+    /* Main app background - dark gradient like your site */
     .main {
-        background-color: #f5f7fa;
+        background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #1e3a8a 100%);
     }
     
+    /* Header - matching your hero gradient */
     .header-container {
-        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #1e3a8a 50%, #2563eb 100%);
         padding: 2.5rem;
         border-radius: 12px;
         margin-bottom: 2rem;
         color: white;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 40px rgba(30, 58, 138, 0.4);
     }
     
     .header-title {
         font-size: 2.8rem;
         font-weight: 700;
         margin-bottom: 0.5rem;
+        color: white;
+    }
+    
+    .header-title-accent {
+        color: #60a5fa;
+        font-weight: 700;
     }
     
     .header-subtitle {
         font-size: 1.3rem;
         opacity: 0.95;
         font-weight: 300;
+        color: #e0f2fe;
     }
     
     .header-tagline {
@@ -101,56 +110,63 @@ st.markdown("""
         font-style: italic;
         border-top: 1px solid rgba(255,255,255,0.3);
         padding-top: 0.75rem;
+        color: #bae6fd;
     }
     
+    /* Model selector */
     .model-selector-box {
-        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(96, 165, 250, 0.1) 100%);
         padding: 1.5rem;
-        border-radius: 10px;
+        border-radius: 12px;
         border: 2px solid #3b82f6;
         margin: 1rem 0;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
     }
     
     .model-info-card {
-        background: white;
+        background: rgba(30, 41, 59, 0.8);
         padding: 1.25rem;
         border-radius: 8px;
         margin: 0.75rem 0;
-        border-left: 4px solid #2563eb;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        border-left: 4px solid #60a5fa;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        color: #f1f5f9;
     }
     
+    /* Metric cards */
     .metric-card {
-        background: rgba(255, 255, 255, 0.9);
+        background: rgba(30, 41, 59, 0.6);
         backdrop-filter: blur(10px);
         padding: 1.75rem;
         border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.07);
-        border: 1px solid rgba(37, 99, 235, 0.1);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(96, 165, 250, 0.2);
         text-align: center;
         margin: 0.5rem 0;
-        transition: transform 0.2s;
+        transition: transform 0.2s, box-shadow 0.2s;
     }
     
     .metric-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
+        border-color: rgba(96, 165, 250, 0.5);
     }
     
     .metric-value {
         font-size: 2.2rem;
         font-weight: 700;
         margin: 0.5rem 0;
-        color: #1e3a8a;
+        color: #60a5fa;
     }
     
     .metric-label {
-        color: #64748b;
+        color: #cbd5e1;
         font-size: 0.95rem;
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
     
+    /* Status badges */
     .status-normal {
         background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         color: white;
@@ -158,7 +174,7 @@ st.markdown("""
         border-radius: 24px;
         font-weight: 600;
         display: inline-block;
-        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
     }
     
     .status-warning {
@@ -168,7 +184,7 @@ st.markdown("""
         border-radius: 24px;
         font-weight: 600;
         display: inline-block;
-        box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+        box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
     }
     
     .status-danger {
@@ -178,33 +194,46 @@ st.markdown("""
         border-radius: 24px;
         font-weight: 600;
         display: inline-block;
-        box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
     }
     
+    /* Info box */
     .info-box {
-        background-color: #dbeafe;
-        border-left: 5px solid #2563eb;
+        background-color: rgba(59, 130, 246, 0.1);
+        border-left: 5px solid #3b82f6;
         padding: 1.25rem;
         margin: 1rem 0;
         border-radius: 6px;
+        color: #e0f2fe;
     }
     
+    /* Buttons - matching your CTA style */
     .stButton>button {
         width: 100%;
-        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+        background: linear-gradient(135deg, #2563eb 0%, #60a5fa 100%);
         color: white;
         font-weight: 600;
         border: none;
-        padding: 0.875rem;
-        border-radius: 10px;
+        padding: 1rem 2rem;
+        border-radius: 8px;
         transition: all 0.3s;
-        box-shadow: 0 2px 4px rgba(30, 58, 138, 0.2);
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+        font-size: 1rem;
     }
     
     .stButton>button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
-        background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+        background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    }
+    
+    /* Sidebar styling */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    }
+    
+    [data-testid="stSidebar"] * {
+        color: #f1f5f9 !important;
     }
 </style>
 """, unsafe_allow_html=True)
