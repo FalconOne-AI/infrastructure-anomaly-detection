@@ -44,8 +44,8 @@ MODELS_CONFIG = {
     "concrete": {
         "name": "Visual Concrete Model",
         "description": "Trained on SDNET2018 visual concrete images",
-        "gdrive_id": "18A7L8toYWNsVfu4VGWxG6Clj8xYmQQjH",
-        "filename": "concrete_autoencoder_week1.pth",
+        "gdrive_id": "1RKMDysHvl34UfR0c6Cya2OFaF3lNnqM4",  # Updated to working v2 model
+        "filename": "concrete_model_v2_working.pth",
         "dataset": "SDNET2018",
         "image_types": "Visual RGB concrete images",
         "best_for": "Surface cracks, spalling, visual defects",
