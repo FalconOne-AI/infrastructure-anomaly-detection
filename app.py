@@ -31,7 +31,7 @@ import gdown
 
 st.set_page_config(
     page_title="Falcon AI Solutions | Anomaly Detection",
-    page_icon="🦅",
+    page_icon="https://www.falconaisolutions.com/lovable-uploads/f28589dc-87f2-42d0-9d82-a577d7ce34ab.png",
     layout="wide",
     initial_sidebar_state="expanded"
 )
