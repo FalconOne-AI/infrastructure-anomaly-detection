@@ -322,12 +322,26 @@ def preprocess_image(image: Image.Image, target_size: Tuple[int, int] = (256, 25
     return transform(image).unsqueeze(0)
 
 def calculate_reconstruction_error(original: torch.Tensor, reconstructed: torch.Tensor) -> np.ndarray:
+    """
+    Calculate per-pixel reconstruction error.
+    Returns 2D error map for visualization and scoring.
+    """
     with torch.no_grad():
         error = torch.mean((original - reconstructed) ** 2, dim=1)
         return error.squeeze().cpu().numpy()
 
 def generate_anomaly_map(error: np.ndarray, threshold: float = 0.5) -> np.ndarray:
-    error_norm = (error - error.min()) / (error.max() - error.min() + 1e-8)
+    """
+    Generate heatmap with threshold-aware coloring.
+    Uses percentile-based normalization to highlight actual anomalies.
+    """
+    # Use 95th percentile as upper bound instead of max (reduces noise sensitivity)
+    upper_bound = np.percentile(error, 95)
+    
+    # Normalize with clipping to highlight regions above threshold
+    error_norm = np.clip(error / (upper_bound + 1e-8), 0, 1)
+    
+    # Apply colormap: blue (low) → green → yellow → red (high)
     cmap = plt.cm.get_cmap('jet')
     heatmap = cmap(error_norm)[:, :, :3]
     return (heatmap * 255).astype(np.uint8)
@@ -511,7 +525,7 @@ def main():
                         with torch.no_grad():
                             reconstruction = model(img_tensor)
                         error = calculate_reconstruction_error(img_tensor, reconstruction)
-                        anomaly_score = float(error.mean())
+                        anomaly_score = float(np.percentile(error, 95))  # Use 95th percentile instead of mean
                         anomaly_map = generate_anomaly_map(error, threshold)
                         overlay = create_overlay(image, anomaly_map, overlay_alpha)
                         reconstructed_img = tensor_to_image(reconstruction)
@@ -547,7 +561,7 @@ def main():
                         with torch.no_grad():
                             reconstruction = model(img_tensor)
                         error = calculate_reconstruction_error(img_tensor, reconstruction)
-                        anomaly_score = float(error.mean())
+                        anomaly_score = float(np.percentile(error, 95))  # Use 95th percentile instead of mean
                         anomaly_map = generate_anomaly_map(error, threshold)
                         overlay = create_overlay(image, anomaly_map, overlay_alpha)
                         reconstructed_img = tensor_to_image(reconstruction)
