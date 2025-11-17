@@ -1,14 +1,19 @@
-"""
 Infrastructure Anomaly Detection - Falcon AI Solutions
 =======================================================
 Dual-model demonstration featuring:
-- Visual Concrete Model (SDNET2018)
+- Visual Concrete Model (SDNET2018) - 20 Epochs, A100 GPU
 - Thermal Infrared Model (SDNET2021)
+
+Concrete Model Details:
+- Training: 20 epochs on 42,448 images
+- Validation Loss: 0.000066 (Epoch 18 - Best)
+- GPU: NVIDIA A100-SXM4-40GB
+- Total Training Time: ~30 minutes
 
 Powered by Falcon AI Solutions
 Transforming Business With AI
 
-Version: 2.0 - Dual Model Edition
+Version: 3.0 - Production Ready (Epoch 18 Final)
 """
 
 import streamlit as st
@@ -31,7 +36,7 @@ import gdown
 
 st.set_page_config(
     page_title="Falcon AI Solutions | Anomaly Detection",
-    page_icon="https://www.falconaisolutions.com/lovable-uploads/f28589dc-87f2-42d0-9d82-a577d7ce34ab.png",
+    page_icon="🦅",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -43,13 +48,15 @@ st.set_page_config(
 MODELS_CONFIG = {
     "concrete": {
         "name": "Visual Concrete Model",
-        "description": "Trained on SDNET2018 visual concrete images",
-        "gdrive_id": "1RKMDysHvl34UfR0c6Cya2OFaF3lNnqM4",  # Updated to working v2 model
-        "filename": "concrete_model_v2_working.pth",
+        "description": "Trained on SDNET2018 visual concrete images (20 epochs, A100 GPU)",
+        "gdrive_id": "1UF-9bdPrpZDBVfV8OnTQAmNnmjc0HVQ1",  # Epoch 18 - Best validation loss
+        "filename": "concrete_autoencoder_epoch18_final.pth",
         "dataset": "SDNET2018",
         "image_types": "Visual RGB concrete images",
         "best_for": "Surface cracks, spalling, visual defects",
-        "training_images": "~28,000 images"
+        "training_images": "~42,000 images (90% train, 10% validation)",
+        "epochs": "20 epochs",
+        "validation_loss": "0.000066 (Epoch 18 - Best)"
     },
     "thermal": {
         "name": "Thermal Infrared Model",
@@ -360,7 +367,7 @@ def create_download_link(images: List[Image.Image], scores: List[float], filenam
 if 'processed_results' not in st.session_state:
     st.session_state.processed_results = []
 if 'threshold' not in st.session_state:
-    st.session_state.threshold = 0.5
+    st.session_state.threshold = 0.005  # Optimized for Epoch 18 model
 if 'selected_model' not in st.session_state:
     st.session_state.selected_model = "concrete"
 
@@ -433,10 +440,10 @@ def main():
         threshold = st.slider(
             "Anomaly Threshold",
             min_value=0.0,
-            max_value=1.0,
-            value=0.5,
-            step=0.05,
-            help="Higher threshold = fewer detections (less sensitive)"
+            max_value=0.02,  # Adjusted for Epoch 18 model (errors are very small)
+            value=0.005,      # Default optimized for crack detection
+            step=0.001,       # Finer granularity
+            help="Lower threshold = more sensitive detection. Optimized for subtle defects."
         )
         st.session_state.threshold = threshold
         
