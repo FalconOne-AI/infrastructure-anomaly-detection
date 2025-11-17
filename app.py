@@ -332,14 +332,21 @@ def calculate_reconstruction_error(original: torch.Tensor, reconstructed: torch.
 
 def generate_anomaly_map(error: np.ndarray, threshold: float = 0.5) -> np.ndarray:
     """
-    Generate heatmap with threshold-aware coloring.
-    Uses percentile-based normalization to highlight actual anomalies.
+    Generate heatmap with improved noise reduction and defect highlighting.
+    Uses percentile-based normalization with smoothing.
     """
-    # Use 95th percentile as upper bound instead of max (reduces noise sensitivity)
-    upper_bound = np.percentile(error, 95)
+    # Simple 3x3 averaging for smoothing (reduces noise)
+    from scipy.ndimage import uniform_filter
+    error_smooth = uniform_filter(error.astype(np.float32), size=3)
     
-    # Normalize with clipping to highlight regions above threshold
-    error_norm = np.clip(error / (upper_bound + 1e-8), 0, 1)
+    # Use 98th percentile as upper bound (reduces noise sensitivity)
+    upper_bound = np.percentile(error_smooth, 98)
+    
+    # Use median (50th percentile) as lower bound to suppress background noise
+    lower_bound = np.percentile(error_smooth, 50)
+    
+    # Normalize: map [median, 98th percentile] → [0, 1]
+    error_norm = np.clip((error_smooth - lower_bound) / (upper_bound - lower_bound + 1e-8), 0, 1)
     
     # Apply colormap: blue (low) → green → yellow → red (high)
     cmap = plt.cm.get_cmap('jet')
@@ -460,11 +467,12 @@ def main():
         st.subheader("Detection Settings")
         threshold = st.slider(
             "Anomaly Threshold",
-            min_value=0.0,
-            max_value=0.02,  # Adjusted for Epoch 18 model (errors are very small)
-            value=0.005,      # Default optimized for crack detection
-            step=0.001,       # Finer granularity
-            help="Lower threshold = more sensitive detection. Optimized for subtle defects."
+            min_value=0.00000,
+            max_value=0.00050,  # Adjusted based on actual score range (0.0001-0.0003)
+            value=0.00010,       # Default: sensitive but not too aggressive
+            step=0.00001,        # Fine-grained control
+            format="%.5f",       # Show 5 decimal places for precision
+            help="Lower threshold = more sensitive detection. Scores typically range 0.0001-0.0003 for defects."
         )
         st.session_state.threshold = threshold
         
