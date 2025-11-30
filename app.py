@@ -32,24 +32,29 @@ class ConcreteAutoencoder(nn.Module):
     def __init__(self):
         super(ConcreteAutoencoder, self).__init__()
         
-        # Encoder
+        # Encoder - matches your trained model architecture
         self.encoder = nn.Sequential(
-            nn.Conv2d(3, 64, kernel_size=3, stride=2, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(64, 128, kernel_size=3, stride=2, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(128, 256, kernel_size=3, stride=2, padding=1),
-            nn.ReLU()
+            nn.Conv2d(3, 32, kernel_size=3, stride=2, padding=1),      # Layer 0
+            nn.ReLU(),                                                  # Layer 1
+            nn.BatchNorm2d(32),                                        # Layer 2
+            nn.Conv2d(32, 64, kernel_size=3, stride=2, padding=1),    # Layer 3
+            nn.ReLU(),                                                  # Layer 4
+            nn.BatchNorm2d(64),                                        # Layer 5
+            nn.Conv2d(64, 128, kernel_size=3, stride=2, padding=1),   # Layer 6
+            nn.ReLU(),                                                  # Layer 7
+            nn.BatchNorm2d(128)                                        # Layer 8
         )
         
-        # Decoder
+        # Decoder - matches your trained model architecture
         self.decoder = nn.Sequential(
-            nn.ConvTranspose2d(256, 128, kernel_size=3, stride=2, padding=1, output_padding=1),
-            nn.ReLU(),
-            nn.ConvTranspose2d(128, 64, kernel_size=3, stride=2, padding=1, output_padding=1),
-            nn.ReLU(),
-            nn.ConvTranspose2d(64, 3, kernel_size=3, stride=2, padding=1, output_padding=1),
-            nn.Sigmoid()
+            nn.ConvTranspose2d(128, 64, kernel_size=3, stride=2, padding=1, output_padding=1),  # Layer 0
+            nn.ReLU(),                                                                            # Layer 1
+            nn.BatchNorm2d(64),                                                                  # Layer 2
+            nn.ConvTranspose2d(64, 32, kernel_size=3, stride=2, padding=1, output_padding=1),   # Layer 3
+            nn.ReLU(),                                                                            # Layer 4
+            nn.BatchNorm2d(32),                                                                  # Layer 5
+            nn.ConvTranspose2d(32, 3, kernel_size=3, stride=2, padding=1, output_padding=1),    # Layer 6
+            nn.Sigmoid()                                                                          # Layer 7
         )
     
     def forward(self, x):
