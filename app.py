@@ -115,11 +115,11 @@ def load_model(substrate_type):
     """Load pre-trained autoencoder model from Google Drive"""
     import gdown
     
-    # Google Drive File IDs - Your actual model files
+    # Google Drive File IDs - REPLACE THESE WITH YOUR ACTUAL FILE IDs
     GDRIVE_MODELS = {
-        'Bridge Deck': '1gEH61QdTh7vfnDpl0ZaP2ryG1I_NbalP',
-        'Wall': '1mNH_qP6egf7355KXZGZG3jeD2S9a91hM',
-        'Pavement': '1YtW1FHLjOsTOtEqTZz4d3e0p3KpezC-N'
+        'Bridge Deck': 'YOUR_DECK_MODEL_FILE_ID',      # Replace with actual ID
+        'Wall': 'YOUR_WALL_MODEL_FILE_ID',              # Replace with actual ID
+        'Pavement': 'YOUR_PAVEMENT_MODEL_FILE_ID'       # Replace with actual ID
     }
     
     model = ConcreteAutoencoder()
@@ -486,3 +486,4 @@ def main():
 # ============================================================================
 
 if __name__ == "__main__":
+    main()
